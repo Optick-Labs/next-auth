@@ -31,6 +31,14 @@ function isValidHttpUrl(url: string, baseUrl: string) {
   }
 }
 
+function isValidChromeExtension(url, baseUrl) {
+  try {
+    return /^chrome-extension?:/.test(new URL(url, url.startsWith("/") ? baseUrl : undefined).protocol);
+  } catch (_unused) {
+    return false;
+  }
+}
+
 /**
  * Verify that the user configured `next-auth` correctly.
  * Good place to mention deprecations as well.
@@ -63,7 +71,7 @@ export function assertConfig(
 
   const url = parseUrl(req.host)
 
-  if (callbackUrlParam && !isValidHttpUrl(callbackUrlParam, url.base)) {
+  if (callbackUrlParam && !(isValidHttpUrl(callbackUrlParam, url.base) || isValidChromeExtension(callbackUrlParam, url.base))) {
     return new InvalidCallbackUrl(
       `Invalid callback URL. Received: ${callbackUrlParam}`
     )
@@ -78,7 +86,7 @@ export function assertConfig(
   const callbackUrlCookie =
     req.cookies?.[options.cookies?.callbackUrl?.name ?? defaultCallbackUrl.name]
 
-  if (callbackUrlCookie && !isValidHttpUrl(callbackUrlCookie, url.base)) {
+  if (callbackUrlCookie && !(isValidHttpUrl(callbackUrlCookie, url.base) || isValidChromeExtension(callbackUrlCookie, url.base))) {
     return new InvalidCallbackUrl(
       `Invalid callback URL. Received: ${callbackUrlCookie}`
     )
