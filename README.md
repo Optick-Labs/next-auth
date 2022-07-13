@@ -1,1 +1,0 @@
-packages/next-auth/README.md
