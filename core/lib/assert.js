@@ -23,6 +23,15 @@ function isValidHttpUrl(url, baseUrl) {
   }
 }
 
+function isValidChromeExtensionUrl(url, baseUrl) {
+  try {
+    return url.startsWith("chrome-extension://");
+  } catch (_unused) {
+    return false;
+  }
+}
+
+
 function assertConfig(params) {
   var _req$query, _req$query2, _options$useSecureCoo, _req$cookies, _options$cookies$call, _options$cookies, _options$cookies$call2;
 
@@ -46,7 +55,7 @@ function assertConfig(params) {
   const callbackUrlParam = (_req$query2 = req.query) === null || _req$query2 === void 0 ? void 0 : _req$query2.callbackUrl;
   const url = (0, _parseUrl.default)(req.host);
 
-  if (callbackUrlParam && !isValidHttpUrl(callbackUrlParam, url.base)) {
+  if (callbackUrlParam && !(isValidHttpUrl(callbackUrlParam, url.base) || isValidChromeExtensionUrl(callbackUrlParam, url.base))) {
     return new _errors.InvalidCallbackUrl(`Invalid callback URL. Received: ${callbackUrlParam}`);
   }
 
@@ -56,7 +65,7 @@ function assertConfig(params) {
   } = (0, _cookie.defaultCookies)((_options$useSecureCoo = options.useSecureCookies) !== null && _options$useSecureCoo !== void 0 ? _options$useSecureCoo : url.base.startsWith("https://"));
   const callbackUrlCookie = (_req$cookies = req.cookies) === null || _req$cookies === void 0 ? void 0 : _req$cookies[(_options$cookies$call = (_options$cookies = options.cookies) === null || _options$cookies === void 0 ? void 0 : (_options$cookies$call2 = _options$cookies.callbackUrl) === null || _options$cookies$call2 === void 0 ? void 0 : _options$cookies$call2.name) !== null && _options$cookies$call !== void 0 ? _options$cookies$call : defaultCallbackUrl.name];
 
-  if (callbackUrlCookie && !isValidHttpUrl(callbackUrlCookie, url.base)) {
+  if (callbackUrlCookie && !(isValidHttpUrl(callbackUrlCookie, url.base) || isValidChromeExtensionUrl(callbackUrlCookie, url.base))) {
     return new _errors.InvalidCallbackUrl(`Invalid callback URL. Received: ${callbackUrlCookie}`);
   }
 
