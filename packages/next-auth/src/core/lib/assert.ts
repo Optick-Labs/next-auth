@@ -33,7 +33,7 @@ function isValidHttpUrl(url: string, baseUrl: string) {
 
 function isValidChromeExtension(url, baseUrl) {
   try {
-    return /^chrome-extension?:/.test(new URL(url, url.startsWith("/") ? baseUrl : undefined).protocol);
+    return url.startsWith("chrome-extension://");
   } catch (_unused) {
     return false;
   }
